@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { StockStatusEnum } from '#woo';
+// 임시 enum 정의
+enum StockStatusEnum {
+  IN_STOCK = 'instock',
+  OUT_OF_STOCK = 'outofstock',
+  ON_BACKORDER = 'onbackorder'
+}
 
 defineProps({
   stockStatus: { type: String, required: false },

@@ -1,5 +1,71 @@
 <script lang="ts" setup>
-import { StockStatusEnum, ProductTypesEnum, type AddToCartInput } from '#woo';
+// 임시 enum 정의
+enum StockStatusEnum {
+  IN_STOCK = 'instock',
+  OUT_OF_STOCK = 'outofstock',
+  ON_BACKORDER = 'onbackorder'
+}
+
+enum ProductTypesEnum {
+  SIMPLE = 'simple',
+  VARIABLE = 'variable',
+  GROUPED = 'grouped',
+  EXTERNAL = 'external'
+}
+
+// 임시 타입 정의
+interface AddToCartInput {
+  productId: number;
+  quantity: number;
+  variationId?: number;
+  variation?: Record<string, string>;
+}
+
+interface Variation {
+  id: number;
+  databaseId: number;
+  attributes: Record<string, string>;
+  price: string;
+  stockStatus: StockStatusEnum;
+}
+
+interface Product {
+  id: number;
+  databaseId: number;
+  name: string;
+  price: string;
+  stockStatus: StockStatusEnum;
+  type: ProductTypesEnum;
+  description: string;
+  shortDescription?: string;
+  image?: { sourceUrl: string };
+  galleryImages?: { sourceUrl: string }[];
+  sku?: string;
+  averageRating?: number;
+  reviewCount?: number;
+  salePrice?: string;
+  regularPrice?: string;
+  externalUrl?: string;
+  buttonText?: string;
+  productCategories?: {
+    nodes: Array<{
+      databaseId: number;
+      slug: string;
+      name: string;
+    }>;
+  };
+  related?: {
+    nodes: Array<{
+      id: number;
+      name: string;
+      price: string;
+      image?: { sourceUrl: string };
+    }>;
+  };
+  variations?: {
+    nodes: Variation[];
+  };
+}
 
 const route = useRoute();
 const { storeSettings } = useAppConfig();
@@ -8,14 +74,78 @@ const { addToCart, isUpdatingCart } = useCart();
 const { t } = useI18n();
 const slug = route.params.slug as string;
 
-const { data } = await useAsyncGql('getProduct', { slug });
-if (!data.value?.product) {
-  throw showError({ statusCode: 404, statusMessage: t('messages.shop.productNotFound') });
-}
+// 임시 데이터로 대체
+const product = ref<Product>({
+  id: 1,
+  databaseId: 1,
+  name: 'Sample Product',
+  price: '29.99',
+  stockStatus: StockStatusEnum.IN_STOCK,
+  type: ProductTypesEnum.SIMPLE,
+  description: 'This is a sample product description.',
+  shortDescription: 'Short description of the sample product.',
+  image: { sourceUrl: '/images/sample1.jpg' },
+  galleryImages: [
+    { sourceUrl: '/images/sample1.jpg' },
+    { sourceUrl: '/images/sample2.jpg' }
+  ],
+  sku: 'SKU123',
+  averageRating: 4.5,
+  reviewCount: 10,
+  salePrice: '24.99',
+  regularPrice: '29.99',
+  productCategories: {
+    nodes: [
+      {
+        databaseId: 1,
+        slug: 'category-1',
+        name: 'Category 1'
+      },
+      {
+        databaseId: 2,
+        slug: 'category-2',
+        name: 'Category 2'
+      }
+    ]
+  },
+  related: {
+    nodes: [
+      {
+        id: 2,
+        name: 'Related Product 1',
+        price: '39.99',
+        image: { sourceUrl: '/images/related1.jpg' }
+      },
+      {
+        id: 3,
+        name: 'Related Product 2',
+        price: '49.99',
+        image: { sourceUrl: '/images/related2.jpg' }
+      }
+    ]
+  },
+  variations: {
+    nodes: [
+      {
+        id: 1,
+        databaseId: 1,
+        attributes: { color: 'red', size: 'M' },
+        price: '29.99',
+        stockStatus: StockStatusEnum.IN_STOCK
+      },
+      {
+        id: 2,
+        databaseId: 2,
+        attributes: { color: 'blue', size: 'L' },
+        price: '34.99',
+        stockStatus: StockStatusEnum.IN_STOCK
+      }
+    ]
+  }
+});
 
-const product = ref<Product>(data?.value?.product);
 const quantity = ref<number>(1);
-const activeVariation = ref<Variation | null>(null);
+const activeVariation = ref<Variation | undefined>(undefined);
 const variation = ref<VariationAttribute[]>([]);
 const indexOfTypeAny = computed<number[]>(() => checkForVariationTypeOfAny(product.value));
 const attrValues = ref();
@@ -24,7 +154,12 @@ const isVariableProduct = computed<boolean>(() => product.value?.type === Produc
 const isExternalProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.EXTERNAL);
 
 const type = computed(() => activeVariation.value || product.value);
-const selectProductInput = computed<any>(() => ({ productId: type.value?.databaseId, quantity: quantity.value })) as ComputedRef<AddToCartInput>;
+const selectProductInput = computed<AddToCartInput>(() => ({
+  productId: type.value?.databaseId || 0,
+  quantity: quantity.value,
+  variationId: activeVariation.value?.databaseId,
+  variation: activeVariation.value ? attrValues.value : undefined
+}));
 
 const mergeLiveStockStatus = (payload: Product): void => {
   product.value.stockStatus = payload.stockStatus ?? product.value?.stockStatus;
@@ -36,14 +171,15 @@ const mergeLiveStockStatus = (payload: Product): void => {
   });
 };
 
-onMounted(async () => {
-  try {
-    const { product } = await GqlGetStockStatus({ slug });
-    if (product) mergeLiveStockStatus(product as Product);
-  } catch (error: any) {
-    const errorMessage = error?.gqlErrors?.[0].message;
-    if (errorMessage) console.error(errorMessage);
-  }
+// GraphQL 쿼리 대신 임시 데이터 사용
+onMounted(() => {
+  // 임시로 재고 상태 업데이트
+  setTimeout(() => {
+    mergeLiveStockStatus({
+      ...product.value,
+      stockStatus: StockStatusEnum.IN_STOCK
+    });
+  }, 1000);
 });
 
 const updateSelectedVariations = (variations: VariationAttribute[]): void => {
@@ -62,10 +198,10 @@ const updateSelectedVariations = (variations: VariationAttribute[]): void => {
   });
 
   // Set variation to the selected variation if it exists
-  activeVariation.value = getActiveVariation?.[0] || null;
+  activeVariation.value = getActiveVariation?.[0] || undefined;
 
-  selectProductInput.value.variationId = activeVariation.value?.databaseId ?? null;
-  selectProductInput.value.variation = activeVariation.value ? attrValues.value : null;
+  selectProductInput.value.variationId = activeVariation.value?.databaseId;
+  selectProductInput.value.variation = activeVariation.value ? attrValues.value : undefined;
   variation.value = variations;
 };
 

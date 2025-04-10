@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TaxonomyEnum } from '#woo';
+// import { TaxonomyEnum } from '#woo';
 
 const { isFiltersActive } = useFiltering();
 const { removeBodyClass } = useHelpers();
@@ -9,16 +9,24 @@ const { storeSettings } = useAppConfig();
 // hide-categories prop is used to hide the category filter on the product category page
 const { hideCategories } = defineProps({ hideCategories: { type: Boolean, default: false } });
 
-const globalProductAttributes = (runtimeConfig?.public?.GLOBAL_PRODUCT_ATTRIBUTES as WooNuxtFilter[]) || [];
-const taxonomies = globalProductAttributes.map((attr) => attr?.slug?.toUpperCase().replace('_', '')) as TaxonomyEnum[];
-const { data } = await useAsyncGql('getAllTerms', { taxonomies: [...taxonomies, TaxonomyEnum.PRODUCTCATEGORY] });
-const terms = data.value?.terms?.nodes;
+// 임시 데이터로 대체
+const productCategoryTerms = [
+  { name: 'Category 1', slug: 'category-1', taxonomyName: 'product_cat' },
+  { name: 'Category 2', slug: 'category-2', taxonomyName: 'product_cat' },
+  { name: 'Category 3', slug: 'category-3', taxonomyName: 'product_cat' }
+];
 
-// Filter out the product category terms and the global product attributes with their terms
-const productCategoryTerms = terms?.filter((term) => term.taxonomyName === 'product_cat');
-
-// Filter out the color attribute and the rest of the global product attributes
-const attributesWithTerms = globalProductAttributes.map((attr) => ({ ...attr, terms: terms?.filter((term) => term.taxonomyName === attr.slug) }));
+const attributesWithTerms = [
+  { 
+    name: 'Color', 
+    slug: 'pa_color',
+    terms: [
+      { name: 'Red', slug: 'red', taxonomyName: 'pa_color' },
+      { name: 'Blue', slug: 'blue', taxonomyName: 'pa_color' },
+      { name: 'Green', slug: 'green', taxonomyName: 'pa_color' }
+    ]
+  }
+];
 </script>
 
 <template>
@@ -28,8 +36,8 @@ const attributesWithTerms = globalProductAttributes.map((attr) => ({ ...attr, te
       <PriceFilter />
       <CategoryFilter v-if="!hideCategories" :terms="productCategoryTerms" />
       <div v-for="attribute in attributesWithTerms" :key="attribute.slug">
-        <ColorFilter v-if="attribute.slug == 'pa_color' || attribute.slug == 'pa_colour'" :attribute />
-        <GlobalFilter v-else :attribute />
+        <ColorFilter v-if="attribute.slug == 'pa_color' || attribute.slug == 'pa_colour'" :attribute="attribute" />
+        <GlobalFilter v-else :attribute="attribute" />
       </div>
       <OnSaleFilter />
       <LazyStarRatingFilter v-if="storeSettings.showReviews" />

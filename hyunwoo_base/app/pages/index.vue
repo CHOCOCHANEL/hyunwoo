@@ -1,12 +1,23 @@
 <script lang="ts" setup>
-import { ProductsOrderByEnum } from '#woo';
 const { siteName, description, shortDescription, siteImage } = useAppConfig();
 
-const { data } = await useAsyncGql('getProductCategories', { first: 6 });
-const productCategories = data.value?.productCategories?.nodes || [];
+// 임시 데이터로 대체
+const productCategories = [
+  { name: 'Category 1', slug: 'category-1', image: { sourceUrl: '/images/placeholder.jpg' } },
+  { name: 'Category 2', slug: 'category-2', image: { sourceUrl: '/images/placeholder.jpg' } },
+  { name: 'Category 3', slug: 'category-3', image: { sourceUrl: '/images/placeholder.jpg' } },
+  { name: 'Category 4', slug: 'category-4', image: { sourceUrl: '/images/placeholder.jpg' } },
+  { name: 'Category 5', slug: 'category-5', image: { sourceUrl: '/images/placeholder.jpg' } },
+  { name: 'Category 6', slug: 'category-6', image: { sourceUrl: '/images/placeholder.jpg' } }
+];
 
-const { data: productData } = await useAsyncGql('getProducts', { first: 5, orderby: ProductsOrderByEnum.POPULARITY });
-const popularProducts = productData.value.products?.nodes || [];
+const popularProducts = [
+  { name: 'Product 1', slug: 'product-1', price: '100', image: { sourceUrl: '/images/placeholder.jpg' } },
+  { name: 'Product 2', slug: 'product-2', price: '200', image: { sourceUrl: '/images/placeholder.jpg' } },
+  { name: 'Product 3', slug: 'product-3', price: '300', image: { sourceUrl: '/images/placeholder.jpg' } },
+  { name: 'Product 4', slug: 'product-4', price: '400', image: { sourceUrl: '/images/placeholder.jpg' } },
+  { name: 'Product 5', slug: 'product-5', price: '500', image: { sourceUrl: '/images/placeholder.jpg' } }
+];
 
 useSeoMeta({
   title: `Home`,
