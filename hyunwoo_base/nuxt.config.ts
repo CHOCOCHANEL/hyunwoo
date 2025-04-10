@@ -50,10 +50,20 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    preset: 'firebase',
     routeRules: {
       '/checkout/order-received/**': { ssr: false },
       '/order-summary/**': { ssr: false },
+      // 404 페이지를 위한 룰 추가
+      '/**': { ssr: true }
     },
+  },
+
+  // 정적 사이트 생성 설정
+  ssr: true,
+  generate: {
+    // Nuxt 3에서는 routes만 지정 가능
+    routes: ['/']
   },
 
   // Multilingual support
