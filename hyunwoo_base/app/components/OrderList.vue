@@ -1,14 +1,33 @@
 <script setup lang="ts">
 const router = useRouter();
 const { formatDate, scrollToTop } = useHelpers();
-const { getOrders, orders } = useAuth();
 
-if (orders.value === null) getOrders();
+// 임시 주문 데이터
+const orders = ref([
+  {
+    orderNumber: '1001',
+    date: new Date().toISOString(),
+    status: 'completed',
+    total: '$99.99'
+  },
+  {
+    orderNumber: '1002',
+    date: new Date(Date.now() - 86400000).toISOString(), // yesterday
+    status: 'processing',
+    total: '$149.99'
+  },
+  {
+    orderNumber: '1003',
+    date: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+    status: 'pending',
+    total: '$79.99'
+  }
+]);
 
 const refresh = () => {
-  orders.value = null;
   scrollToTop();
-  getOrders();
+  // 임시로 데이터를 다시 로드하는 것처럼 보이게 함
+  orders.value = [...orders.value];
 };
 
 const goToOrder = (orderNumber: string): void => {

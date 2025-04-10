@@ -61,6 +61,14 @@
 </template>
 
 <script setup lang="ts">
+// 임시 타입 정의
+interface UserInfo {
+  email: string;
+  password: string;
+  username: string;
+  rememberMe: boolean;
+}
+
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();

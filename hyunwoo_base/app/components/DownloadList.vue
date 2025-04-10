@@ -1,13 +1,28 @@
 <script setup lang="ts">
 const { scrollToTop } = useHelpers();
-const { getDownloads, downloads } = useAuth();
 
-if (downloads.value === null) getDownloads();
+// 임시 다운로드 데이터
+const downloads = ref([
+  {
+    id: '1',
+    name: 'Sample Download 1',
+    downloadUrl: '#',
+    expires: new Date(Date.now() + 86400000).toISOString(), // tomorrow
+    remainingDownloads: 5
+  },
+  {
+    id: '2',
+    name: 'Sample Download 2',
+    downloadUrl: '#',
+    expires: new Date(Date.now() + 172800000).toISOString(), // 2 days from now
+    remainingDownloads: 3
+  }
+]);
 
 const refresh = () => {
-  downloads.value = null;
   scrollToTop();
-  getDownloads();
+  // 임시로 데이터를 다시 로드하는 것처럼 보이게 함
+  downloads.value = [...downloads.value];
 };
 </script>
 

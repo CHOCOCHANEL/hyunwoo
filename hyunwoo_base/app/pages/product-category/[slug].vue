@@ -5,9 +5,32 @@ const { storeSettings } = useAppConfig();
 const route = useRoute();
 const slug = route.params.slug;
 
-const { data } = await useAsyncGql('getProducts', { slug });
-const productsInCategory = (data.value?.products?.nodes || []) as Product[];
-setProducts(productsInCategory);
+// 임시 상품 데이터
+const productsInCategory = ref([
+  {
+    id: 1,
+    name: 'Product 1',
+    price: '29.99',
+    image: { sourceUrl: '/images/product1.jpg' },
+    stockStatus: 'instock'
+  },
+  {
+    id: 2,
+    name: 'Product 2',
+    price: '39.99',
+    image: { sourceUrl: '/images/product2.jpg' },
+    stockStatus: 'instock'
+  },
+  {
+    id: 3,
+    name: 'Product 3',
+    price: '49.99',
+    image: { sourceUrl: '/images/product3.jpg' },
+    stockStatus: 'instock'
+  }
+]);
+
+setProducts(productsInCategory.value);
 
 onMounted(() => {
   if (!isQueryEmpty.value) updateProductList();
@@ -23,7 +46,7 @@ watch(
 
 useHead({
   title: 'Products',
-  meta: [{ hid: 'description', name: 'description', content: 'Products' }],
+  meta: [{ name: 'description', content: 'Products' }],
 });
 </script>
 

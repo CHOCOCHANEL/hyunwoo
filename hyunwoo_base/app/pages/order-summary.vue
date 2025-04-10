@@ -1,22 +1,83 @@
 <script setup lang="ts">
-import { OrderStatusEnum } from '#woo';
+// 임시 enum 정의
+enum OrderStatusEnum {
+  COMPLETED = 'COMPLETED',
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  ON_HOLD = 'ON_HOLD',
+  CANCELLED = 'CANCELLED',
+  REFUNDED = 'REFUNDED',
+  FAILED = 'FAILED'
+}
 
 const { query, params, name } = useRoute();
 const { customer } = useAuth();
 const { formatDate, formatPrice } = useHelpers();
 const { t } = useI18n();
 
-const order = ref<Order | null>(null);
+// 임시 주문 데이터
+const order = ref({
+  id: '1',
+  databaseId: '1',
+  status: OrderStatusEnum.COMPLETED,
+  date: new Date().toISOString(),
+  paymentMethodTitle: 'Credit Card',
+  subtotal: '$100.00',
+  totalTax: '$10.00',
+  shippingTotal: '$5.00',
+  discountTotal: '$0.00',
+  total: '$115.00',
+  lineItems: {
+    nodes: [
+      {
+        id: '1',
+        quantity: 1,
+        total: '$50.00',
+        product: {
+          node: {
+            name: 'Sample Product 1',
+            slug: 'sample-product-1',
+            image: {
+              sourceUrl: '/images/placeholder.png',
+              altText: 'Sample Product 1',
+              title: 'Sample Product 1'
+            }
+          }
+        }
+      },
+      {
+        id: '2',
+        quantity: 2,
+        total: '$50.00',
+        product: {
+          node: {
+            name: 'Sample Product 2',
+            slug: 'sample-product-2',
+            image: {
+              sourceUrl: '/images/placeholder.png',
+              altText: 'Sample Product 2',
+              title: 'Sample Product 2'
+            }
+          }
+        }
+      }
+    ]
+  },
+  downloadableItems: {
+    nodes: []
+  }
+});
+
 const fetchDelay = ref<boolean>(query.fetch_delay === 'true');
 const delayLength = 2500;
-const isLoaded = ref<boolean>(false);
+const isLoaded = ref<boolean>(true);
 const errorMessage = ref('');
 
 const isGuest = computed(() => !customer.value?.email);
 const isSummaryPage = computed<boolean>(() => name === 'order-summary');
 const isCheckoutPage = computed<boolean>(() => name === 'order-received');
 const orderIsNotCompleted = computed<boolean>(() => order.value?.status !== OrderStatusEnum.COMPLETED);
-const hasDiscount = computed<boolean>(() => !!parseFloat(order.value?.rawDiscountTotal || '0'));
+const hasDiscount = computed<boolean>(() => !!parseFloat(order.value?.discountTotal?.replace('$', '') || '0'));
 const downloadableItems = computed(() => order.value?.downloadableItems?.nodes || []);
 
 onBeforeMount(() => {
@@ -28,37 +89,17 @@ onBeforeMount(() => {
 });
 
 onMounted(async () => {
-  await getOrder();
-  /**
-   * WooCommerce sometimes takes a while to update the order status.
-   * This is a workaround to fetch the order again after a delay.
-   * The length of the delay might need to be adjusted depending on your server.
-   */
-
   if (isCheckoutPage.value && fetchDelay.value && orderIsNotCompleted.value) {
     setTimeout(() => {
-      getOrder();
+      // 임시 데이터 업데이트 로직
     }, delayLength);
   }
 });
 
-async function getOrder() {
-  try {
-    const data = await GqlGetOrder({ id: params.orderId as string });
-    if (data.order) {
-      order.value = data.order;
-    } else {
-      errorMessage.value = 'Could not find order';
-    }
-  } catch (err: any) {
-    errorMessage.value = err?.gqlErrors?.[0].message || 'Could not find order';
-  }
-  isLoaded.value = true;
-}
-
 const refreshOrder = async () => {
   isLoaded.value = false;
-  await getOrder();
+  // 임시 데이터 업데이트 로직
+  isLoaded.value = true;
 };
 
 useSeoMeta({

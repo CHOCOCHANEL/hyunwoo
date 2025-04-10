@@ -1,5 +1,21 @@
 <script setup lang="ts">
-import { LoginProviderEnum } from '#woo';
+// 임시 enum 정의
+enum LoginProviderEnum {
+  PASSWORD = 'PASSWORD',
+  FACEBOOK = 'FACEBOOK',
+  GITHUB = 'GITHUB',
+  GOOGLE = 'GOOGLE',
+  INSTAGRAM = 'INSTAGRAM',
+  LINKEDIN = 'LINKEDIN'
+}
+
+// 임시 타입 정의
+interface LoginClient {
+  provider: LoginProviderEnum;
+  name?: string;
+  authorizationUrl?: string;
+}
+
 const { loginClients, loginWithProvider } = useAuth();
 
 const route = useRoute();

@@ -144,8 +144,9 @@ async function saveChanges(): Promise<void> {
   const billing = customer.value.billing;
 
   try {
-    const { updateCustomer } = await GqlUpdateCustomer({ input: { id: viewer.value.id, shipping, billing } });
-    if (updateCustomer) button.value = { text: t('messages.account.updateSuccess'), color: 'bg-green-500' };
+    // 임시 업데이트 함수
+    await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 지연
+    button.value = { text: t('messages.account.updateSuccess'), color: 'bg-green-500' };
   } catch (error) {
     button.value = { text: t('messages.account.failed'), color: 'bg-red-500' };
   }
