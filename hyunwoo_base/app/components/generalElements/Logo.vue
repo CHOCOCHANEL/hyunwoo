@@ -3,7 +3,10 @@ const { siteName } = useAppConfig();
 const runtimeConfig = useRuntimeConfig();
 const img = useImage();
 
-const logoUrl = runtimeConfig?.public?.LOGO ? img(runtimeConfig?.public?.LOGO) : null;
+// LOGO가 문자열인지 확인하고 타입 안전성 확보
+const logoUrl = typeof runtimeConfig?.public?.LOGO === 'string' 
+  ? img(runtimeConfig.public.LOGO) 
+  : null;
 const faviconUrl = '/logo.svg';
 </script>
 
