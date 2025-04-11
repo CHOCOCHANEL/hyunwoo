@@ -84,4 +84,6 @@ export default defineNuxtConfig({
     strategy: 'no_prefix',
     restructureDir: false,
   },
+
+  css: [resolve('./app/assets/css/main.css')],
 });

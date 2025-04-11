@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { wooNuxtVersionInfo } = useHelpers();
+const { hyunwooVersionInfo } = useHelpers();
 const { wishlistLink } = useAuth();
 </script>
 
@@ -51,8 +51,8 @@ const { wishlistLink } = useAuth();
     <div class="container border-t flex items-center justify-center mb-4">
       <div class="copywrite">
         <p class="py-4 text-xs text-center">
-          <a href="https://woonuxt.com" :title="`WooNuxt v${wooNuxtVersionInfo}`">{{ `WooNuxt v${wooNuxtVersionInfo}` }}</a> - by
-          <a href="https://scottyzen.com" title="Scott Kennedy - Web Developer" target="_blank">Scott Kennedy</a>
+          <a href="https://feeldoors.com" :title="`Hyunwoo v${hyunwooVersionInfo}`">{{ `Hyunwoo v${hyunwooVersionInfo}` }}</a> - by
+          <a href="https://github.com/CHOCOCHANEL" title="Choco Chanel - Web Developer" target="_blank">CHOCO CHANEL</a>
         </p>
       </div>
       <SocialIcons class="ml-auto" />

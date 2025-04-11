@@ -1,7 +1,11 @@
 import type { Config } from 'tailwindcss';
 
 export default <Partial<Config>>{
-  content: ['./components/**/*.{js,vue,ts}', './layouts/**/*.vue', './pages/**/*.vue', './plugins/**/*.{js,ts}', './nuxt.config.{js,ts}', './app.vue'],
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
   theme: {
     container: {
       center: true,
@@ -20,6 +24,9 @@ export default <Partial<Config>>{
       },
       screens: {
         '2xl': '1400px',
+      },
+      fontFamily: {
+        sans: ['var(--font-sans)'],
       },
     },
   },

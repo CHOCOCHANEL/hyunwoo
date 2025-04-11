@@ -1,15 +1,42 @@
 import pkg from '../../../hyunwoo_base/package.json';
 
+// RuntimeConfig 타입 정의
+interface RuntimeConfig {
+  public: {
+    PRODUCTS_PER_PAGE?: number;
+    WOO_NUXT_SEO?: any[];
+    FRONT_END_URL?: string;
+  };
+}
+
+// Product 타입 정의
+interface Product {
+  attributes?: {
+    nodes?: Array<{
+      value?: string;
+    }>;
+  };
+  variations?: {
+    nodes?: Array<{
+      attributes?: {
+        nodes?: Array<{
+          value?: string;
+        }>;
+      };
+    }>;
+  };
+}
+
 // A collection of helper functions.
 export function useHelpers() {
   const route = useRoute();
-  const runtimeConfig = useRuntimeConfig();
+  const runtimeConfig = useRuntimeConfig() as RuntimeConfig;
 
   const isShowingMobileMenu = useState<boolean>('isShowingMobileMenu', () => false);
-  const wooNuxtVersionInfo: string = pkg.version || '0.0.0';
-  const productsPerPage: number = runtimeConfig.public?.PRODUCTS_PER_PAGE || 24;
+  const hyunwooVersionInfo: string = pkg.version || '0.0.0';
+  const productsPerPage: number = runtimeConfig.public?.PRODUCTS_PER_PAGE ?? 24;
   const wooNuxtSEO = Array.isArray(runtimeConfig.public?.WOO_NUXT_SEO) ? runtimeConfig.public?.WOO_NUXT_SEO : [];
-  const frontEndUrl = runtimeConfig.public?.FRONT_END_URL?.replace(/\/$/, '') || null;
+  const frontEndUrl = runtimeConfig.public?.FRONT_END_URL ? runtimeConfig.public.FRONT_END_URL.replace(/\/$/, '') : null;
   const isDev: boolean = process.env.NODE_ENV === 'development';
   const FALLBACK_IMG = '/images/placeholder.jpg';
 
@@ -115,8 +142,8 @@ export function useHelpers() {
 
     for (let index = 0; index < numberOfVariation; index++) {
       const tempArray = [] as string[];
-      product?.variations?.nodes?.forEach((element) => {
-        const value = element.attributes?.nodes[index]?.value;
+      product?.variations?.nodes?.forEach((element: { attributes?: { nodes?: Array<{ value?: string }> } }) => {
+        const value = element.attributes?.nodes?.[index]?.value;
         if (typeof value === 'string') tempArray.push(value);
       });
 
@@ -206,7 +233,7 @@ export function useHelpers() {
 
   return {
     isShowingMobileMenu,
-    wooNuxtVersionInfo,
+    hyunwooVersionInfo,
     productsPerPage,
     isQueryEmpty,
     wooNuxtSEO,
