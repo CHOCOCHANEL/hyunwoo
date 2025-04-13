@@ -52,7 +52,7 @@ const { wishlistLink } = useAuth();
       <div class="copywrite">
         <p class="py-4 text-xs text-center">
           <a href="https://feeldoors.com" :title="`Hyunwoo v${hyunwooVersionInfo}`">{{ `Hyunwoo v${hyunwooVersionInfo}` }}</a> - by
-          <a href="https://github.com/CHOCOCHANEL" title="Choco Chanel - Web Developer" target="_blank">CHOCO CHANEL</a>
+          <a href="https://github.com/CHOCOCHANEL" title="Choco Chanel - Web Developer" target="_blank">choco chanel</a>
         </p>
       </div>
       <SocialIcons class="ml-auto" />
