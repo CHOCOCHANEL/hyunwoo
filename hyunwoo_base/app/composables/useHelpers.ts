@@ -6,6 +6,15 @@ interface RuntimeConfig {
     PRODUCTS_PER_PAGE?: number;
     WOO_NUXT_SEO?: any[];
     FRONT_END_URL?: string;
+    socialMedia?: {
+      facebook?: string;
+      twitter?: string;
+      instagram?: string;
+    };
+    siteTitle?: string;
+    siteDescription?: string;
+    siteUrl?: string;
+    siteImage?: string;
   };
 }
 
@@ -35,7 +44,29 @@ export function useHelpers() {
   const isShowingMobileMenu = useState<boolean>('isShowingMobileMenu', () => false);
   const hyunwooVersionInfo: string = pkg.version || '0.0.0';
   const productsPerPage: number = runtimeConfig.public?.PRODUCTS_PER_PAGE ?? 24;
-  const wooNuxtSEO = Array.isArray(runtimeConfig.public?.WOO_NUXT_SEO) ? runtimeConfig.public?.WOO_NUXT_SEO : [];
+  const wooNuxtSEO = computed<WooNuxtSEOItem[]>(() => {
+    const socialMedia = runtimeConfig.public?.socialMedia;
+    if (!socialMedia) return [];
+
+    return [
+      {
+        provider: 'facebook',
+        url: socialMedia.facebook,
+        icon: 'ion:logo-facebook'
+      },
+      {
+        provider: 'twitter',
+        url: `https://twitter.com/${socialMedia.twitter?.replace('@', '')}`,
+        handle: socialMedia.twitter,
+        icon: 'ion:logo-twitter'
+      },
+      {
+        provider: 'instagram',
+        url: socialMedia.instagram,
+        icon: 'ion:logo-instagram'
+      }
+    ].filter(item => item.url);
+  });
   const frontEndUrl = runtimeConfig.public?.FRONT_END_URL ? runtimeConfig.public.FRONT_END_URL.replace(/\/$/, '') : null;
   const isDev: boolean = process.env.NODE_ENV === 'development';
   const FALLBACK_IMG = '/images/placeholder.jpg';
@@ -257,5 +288,9 @@ export function useHelpers() {
     debounce,
     logGQLError,
     getDomain,
+    siteTitle: runtimeConfig.public?.siteTitle,
+    siteDescription: runtimeConfig.public?.siteDescription,
+    siteUrl: runtimeConfig.public?.siteUrl,
+    siteImage: runtimeConfig.public?.siteImage,
   };
 }

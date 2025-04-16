@@ -10,6 +10,16 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
+      title: process.env.NUXT_PUBLIC_SITE_TITLE,
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { key: 'description', name: 'description', content: process.env.NUXT_PUBLIC_SITE_DESCRIPTION },
+        { key: 'og:title', property: 'og:title', content: process.env.NUXT_PUBLIC_SITE_TITLE },
+        { key: 'og:description', property: 'og:description', content: process.env.NUXT_PUBLIC_SITE_DESCRIPTION },
+        { key: 'og:image', property: 'og:image', content: `${process.env.NUXT_PUBLIC_SITE_URL}${process.env.NUXT_PUBLIC_SITE_IMAGE}` },
+        { key: 'og:url', property: 'og:url', content: process.env.NUXT_PUBLIC_SITE_URL }
+      ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
@@ -90,4 +100,30 @@ export default defineNuxtConfig({
   },
 
   css: [resolve('./app/assets/css/main.css')],
+
+  runtimeConfig: {
+    public: {
+      PRODUCTS_PER_PAGE: process.env.NUXT_PUBLIC_PRODUCTS_PER_PAGE,
+      
+      siteTitle: process.env.NUXT_PUBLIC_SITE_TITLE,
+      siteDescription: process.env.NUXT_PUBLIC_SITE_DESCRIPTION,
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
+      siteImage: process.env.NUXT_PUBLIC_SITE_IMAGE,
+      
+      socialMedia: {
+        facebook: process.env.NUXT_PUBLIC_FACEBOOK_URL,
+        twitter: process.env.NUXT_PUBLIC_TWITTER_HANDLE,
+        instagram: process.env.NUXT_PUBLIC_INSTAGRAM_URL
+      },
+      
+      firebase: {
+        apiKey: process.env.FIREBASE_API_KEY,
+        authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+        appId: process.env.FIREBASE_APP_ID
+      }
+    }
+  },
 });

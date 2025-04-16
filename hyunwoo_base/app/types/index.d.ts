@@ -78,6 +78,7 @@ interface WooNuxtSEOItem {
   provider: string;
   url?: string;
   handle?: string;
+  icon?: string;
 }
 
 interface WooNuxtFilter {
@@ -93,4 +94,10 @@ interface UserInfo {
   email: string;
   password: string;
   username: string;
+}
+
+interface SocialMediaConfig {
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
 }

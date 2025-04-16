@@ -1,29 +1,31 @@
 <script setup lang="ts">
-const { frontEndUrl, wooNuxtSEO, stripHtml } = useHelpers();
+const { frontEndUrl, wooNuxtSEO, stripHtml, siteTitle, siteDescription, siteUrl, siteImage } = useHelpers();
 const { path } = useRoute();
 const { info } = defineProps({ info: { type: Object as PropType<Product>, required: true } });
 
-const title = info.name;
-const canonical = `${frontEndUrl}${path}`;
-const siteName = process.env.SITE_TITLE ?? 'WooNuxt';
+const title = info.name || siteTitle;
+const canonical = `${frontEndUrl || siteUrl}${path}`;
+const siteName = siteTitle || 'Hyunwoo Feel Doors';
 
 const img = useImage();
-const imageURL = info.image?.sourceUrl ?? '/images/placeholder.jpg';
+const imageURL = info.image?.sourceUrl ?? siteImage;
 const defaultImageSrc = img.getSizes(imageURL, { width: 1200, height: 630 }).src;
 const twitterImageSrc = img.getSizes(imageURL, { width: 1600, height: 900 }).src;
 
 const getFullImageURL = (url?: string) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${frontEndUrl}${url}`;
+  return `${frontEndUrl || siteUrl}${url}`;
 };
 
 const defaultImage = getFullImageURL(defaultImageSrc);
 const twitterImage = getFullImageURL(twitterImageSrc);
-const description = info.shortDescription || info.description ? stripHtml(info.shortDescription || '') : stripHtml(info.description || '');
+const description = info.shortDescription || info.description 
+  ? stripHtml(info.shortDescription || '') 
+  : stripHtml(info.description || siteDescription || '');
 
-const facebook = wooNuxtSEO?.find((item) => item?.provider === 'facebook') ?? null;
-const twitter = wooNuxtSEO?.find((item) => item?.provider === 'twitter') ?? null;
+const facebook = wooNuxtSEO.value?.find((item) => item?.provider === 'facebook') ?? null;
+const twitter = wooNuxtSEO.value?.find((item) => item?.provider === 'twitter') ?? null;
 </script>
 
 <template>
